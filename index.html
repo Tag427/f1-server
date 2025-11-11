@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>F1 Circuits API</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>🏎️ F1 Circuits API</h1>
+      <p class="subtitle">Formula 1 Race Circuit Information Service</p>
+
+      <h2>Available API Endpoints</h2>
+
+      <div class="endpoint">
+        <div>
+          <span class="method">GET</span>
+          <span class="route">/api/circuits</span>
+        </div>
+        <p class="description">
+          Get all Formula 1 circuits. Returns an array of all circuit objects
+          with complete information.
+        </p>
+        <div class="example">
+          <code><a href="/api/circuits" target="_blank">/api/circuits</a></code>
+        </div>
+        <p class="response-example">Returns: Array of circuit objects</p>
+      </div>
+
+      <div class="endpoint">
+        <div>
+          <span class="method">GET</span>
+          <span class="route">/api/circuits/:id</span>
+        </div>
+        <p class="description">
+          Get a specific circuit by ID. Returns a single circuit object with all
+          details.
+        </p>
+        <div class="example">
+          <code
+            ><a href="/api/circuits/1" target="_blank">/api/circuits/1</a></code
+          >
+        </div>
+        <p class="response-example">Returns: Single circuit object</p>
+      </div>
+
+      <h2>Circuit Object Structure</h2>
+      <div class="example">
+        <code>
+          {<br />
+          &nbsp;&nbsp;"_id": 1,<br />
+          &nbsp;&nbsp;"name": "Melbourne Grand Prix Circuit",<br />
+          &nbsp;&nbsp;"slug": "melbourne",<br />
+          &nbsp;&nbsp;"location": "Melbourne, Australia",<br />
+          &nbsp;&nbsp;"img_name": "/images/melbourne2.avif",<br />
+          &nbsp;&nbsp;"length_km": 5.278,<br />
+          &nbsp;&nbsp;"laps": 58,<br />
+          &nbsp;&nbsp;"drs_zones": 4,<br />
+          &nbsp;&nbsp;"opened": 1996<br />
+          }
+        </code>
+      </div>
+
+      <h2>Usage Example</h2>
+      <div class="example">
+        <code>
+          fetch('https://your-server-url.com/api/circuits')<br />
+          &nbsp;&nbsp;.then(response => response.json())<br />
+          &nbsp;&nbsp;.then(data => console.log(data));
+        </code>
+      </div>
+    </div>
+  </body>
+</html>

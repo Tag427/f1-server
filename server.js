@@ -1,7 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const Joi = require("joi");
 const app = express();
 
+app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
 
@@ -9,7 +11,6 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-// Circuits data array
 let circuits = [
   {
     _id: 1,
@@ -112,12 +113,22 @@ let circuits = [
   },
 ];
 
-// GET all circuits
+const validateCircuit = (circuit) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).required(),
+    location: Joi.string().min(3).required(),
+    length_km: Joi.number().min(0.1).required(),
+    laps: Joi.number().integer().min(1).required(),
+    drs_zones: Joi.number().integer().min(0).required(),
+    opened: Joi.number().integer().min(1900).max(new Date().getFullYear()).required(),
+  });
+  return schema.validate(circuit);
+};
+
 app.get("/api/circuits", (req, res) => {
   res.send(circuits);
 });
 
-// GET single circuit by ID
 app.get("/api/circuits/:id", (req, res) => {
   const circuit = circuits.find((c) => c._id === parseInt(req.params.id));
   
@@ -127,6 +138,37 @@ app.get("/api/circuits/:id", (req, res) => {
   }
   
   res.send(circuit);
+});
+
+app.post("/api/circuits", (req, res) => {
+  const result = validateCircuit(req.body);
+  
+  if (result.error) {
+    res.status(400).send(result.error.details[0].message);
+    return;
+  }
+
+  const slug = req.body.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+  const circuit = {
+    _id: circuits.length + 1,
+    name: req.body.name,
+    slug: slug,
+    location: req.body.location,
+    img_name: "/images/default-circuit.jpg",
+    length_km: req.body.length_km,
+    laps: req.body.laps,
+    drs_zones: req.body.drs_zones,
+    opened: req.body.opened,
+  };
+
+  
+  circuits.push(circuit);
+  
+  res.status(201).send(circuit);
 });
 
 const PORT = process.env.PORT || 3001;

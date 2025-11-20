@@ -165,10 +165,53 @@ app.post("/api/circuits", (req, res) => {
     opened: req.body.opened,
   };
 
-  
   circuits.push(circuit);
   
   res.status(201).send(circuit);
+});
+
+app.put("/api/circuits/:id", (req, res) => {
+  const circuit = circuits.find((c) => c._id === parseInt(req.params.id));
+  
+  if (!circuit) {
+    res.status(404).send("The circuit with the given ID was not found");
+    return;
+  }
+
+  const result = validateCircuit(req.body);
+  
+  if (result.error) {
+    res.status(400).send(result.error.details[0].message);
+    return;
+  }
+
+  circuit.name = req.body.name;
+  circuit.location = req.body.location;
+  circuit.length_km = req.body.length_km;
+  circuit.laps = req.body.laps;
+  circuit.drs_zones = req.body.drs_zones;
+  circuit.opened = req.body.opened;
+
+  circuit.slug = req.body.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+  res.status(200).send(circuit);
+});
+
+app.delete("/api/circuits/:id", (req, res) => {
+  const circuit = circuits.find((c) => c._id === parseInt(req.params.id));
+  
+  if (!circuit) {
+    res.status(404).send("The circuit with the given ID was not found");
+    return;
+  }
+
+  const index = circuits.indexOf(circuit);
+  circuits.splice(index, 1);
+
+  res.status(200).send(circuit);
 });
 
 const PORT = process.env.PORT || 3001;
